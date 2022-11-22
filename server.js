@@ -1,6 +1,6 @@
-const express = require('express');
-const cors = require('cors');
-const app = express();
+const app = require('./src/app');
+const keys = require('./src/utils/keys');
+
 app.listen(keys.port, ()=>{
-    console.log('Server iniciado en el puerto'+ keys.port);
+    console.log('Server iniciado en el puerto: '+ keys.port);
 })

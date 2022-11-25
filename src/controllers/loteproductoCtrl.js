@@ -1,7 +1,8 @@
 const pool = require('../models/repository_postgre');
 
 exports.create = async (req, res) => {
-    const {id_lote , id_product} = req.body;
+    try {
+        const {id_lote , id_product} = req.body;
     const response = await pool.query(`INSERT INTO lote_producto (id_lote , id_product) VALUES ($1, $2)`, [id_lote , id_product]);
     res.status(201).json({
         success: true,
@@ -12,6 +13,9 @@ exports.create = async (req, res) => {
             }
         }
     })
+    } catch (error) {
+        res.status(500).send({ success: false, message: 'loteproducto.createErr', body: error})
+    }
   }
 
 

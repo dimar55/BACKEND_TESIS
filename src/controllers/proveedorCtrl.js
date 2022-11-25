@@ -2,7 +2,8 @@ const pool = require('../models/repository_postgre');
 
 
 exports.create = async (req, res) => {
-    const {cedula_pro, nombre_pro, tipo_documento_pro, telefono_pro, correo_pro} = req.body;
+    try {
+        const {cedula_pro, nombre_pro, tipo_documento_pro, telefono_pro, correo_pro} = req.body;
     const response = await pool.query(`INSERT INTO proveedor (cedula_pro, nombre_pro, tipo_documento_pro, telefono_pro, correo_pro) VALUES ($1, $2, $3, $4, $5)`, [cedula_pro, nombre_pro, tipo_documento_pro, telefono_pro, correo_pro]);
     res.status(201).json({
         success: true,
@@ -13,6 +14,10 @@ exports.create = async (req, res) => {
             }
         }
     })
+    } catch (error) {
+        res.status(500).send({ success: false, message: 'proveedor.createErr', body: error})
+    }
+    
   }
 
 exports.getAll = async (req, res) => {

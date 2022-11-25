@@ -18,7 +18,8 @@ exports.insertarVentaProducto = async (req, res) => {
 
 
 exports.create = async (req, res, next) => {
-    let total = 0;
+    try {
+        let total = 0;
     const {productos} = req.body;
     for (let index = 0; index < productos.length; index++) {
         total += productos[index][1]*productos[index][2];
@@ -28,4 +29,8 @@ exports.create = async (req, res, next) => {
     req.body.id_venta = response.rows[0].id_venta;
     req.body.total_venta = total;
     next();
+    } catch (error) {
+        res.status(500).send({ success: false, message: 'venta.createErr', body: error})
+    }
+    
   }

@@ -3,7 +3,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 exports.createUsuario = async (req, res) => {
-    const {cedula_usu, nombre_usu, nick_usu, contra_usu, rol_usu} = req.body;
+    try {
+        const {cedula_usu, nombre_usu, nick_usu, contra_usu, rol_usu} = req.body;
     const pswHash = bcrypt.hashSync(contra_usu, 10);
     const response = await pool.query(`INSERT INTO usuario (cedula_usu, nombre_usu, nick_usu, contra_usu, rol_usu) VALUES ($1, $2, $3, $4, $5)`, [cedula_usu, nombre_usu, nick_usu, pswHash, rol_usu]);
     res.status(201).json({
@@ -15,6 +16,10 @@ exports.createUsuario = async (req, res) => {
             }
         }
     })
+    } catch (error) {
+        res.status(500).send({ success: false, message: 'usuario.createErr', body: error})
+    }
+    
   }
 
 exports.getUsuarios = async (req, res) => {

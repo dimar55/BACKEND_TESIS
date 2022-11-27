@@ -13,7 +13,7 @@ function obtenerNombres(array){
 exports.getAll = async (req, res) => {
     try {
         const ventas = await pool.query('SELECT id_venta, total_venta FROM venta');
-        const response = await pool.query(`SELECT  venta.id_venta, venta.fecha_venta, producto.nombre_product FROM venta_producto INNER JOIN producto ON producto.id_product = venta_producto.id_product INNER JOIN venta ON venta.id_venta = venta_producto.id_venta`);
+        const response = await pool.query(`SELECT  venta.id_venta, to_char(venta.fecha_venta, 'YYYY-MON-DD') as fecha_venta, producto.nombre_product FROM venta_producto INNER JOIN producto ON producto.id_product = venta_producto.id_product INNER JOIN venta ON venta.id_venta = venta_producto.id_venta`);
         let resp = [];
         for (let index = 0; index < ventas.rows.length; index++) {
             const element = ventas.rows[index];

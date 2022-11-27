@@ -1,6 +1,39 @@
 const pool = require('../models/repository_postgre');
 const format = require('pg-format');
 
+function obtenerNombres(array){
+    let prods = []
+    for (let index = 0; index < array.length; index++) {
+        const element = array[index];
+        prods.push(element.nombre_product)
+    }
+    return prods;
+}
+
+exports.getAll = async (req, res) => {
+    try {
+        const ventas = await pool.query('SELECT id_venta, total_venta FROM venta');
+        const response = await pool.query(`SELECT  venta.id_venta, venta.fecha_venta, producto.nombre_product FROM venta_producto INNER JOIN producto ON producto.id_product = venta_producto.id_product INNER JOIN venta ON venta.id_venta = venta_producto.id_venta`);
+        let resp = [];
+        for (let index = 0; index < ventas.rows.length; index++) {
+            const element = ventas.rows[index];
+            let prods = response.rows.filter(ele => ele.id_venta == element.id_venta);
+            if(prods.length>0){
+                const venta = {
+                    id_venta: element.id_venta,
+                    total_venta: element.total_venta,
+                    fecha_venta: prods[0].fecha_venta,
+                    prods: obtenerNombres(prods)
+                }
+                resp.push(venta)
+            }
+            
+        }
+        res.status(200).send({success: true, body: resp})
+    } catch (error) {
+        res.status(500).send({ success: false, message: 'venta.getAll', body: error})
+    }
+}
 
 exports.insertarVentaProducto = async (req, res) => {
     const {productos} = req.body;

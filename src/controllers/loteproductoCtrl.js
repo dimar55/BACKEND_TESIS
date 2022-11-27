@@ -22,7 +22,7 @@ exports.create = async (req, res) => {
   
 exports.getAll = async (req, res) => {
     try {
-        const response = await pool.query(`SELECT producto.*, lote.* FROM lote_producto INNER JOIN producto ON producto.id_product = lote_producto.id_product INNER JOIN lote ON lote.id_lote = lote_producto.id_lote`);
+        const response = await pool.query(`SELECT producto.*, lote.* FROM lote_producto INNER JOIN producto ON producto.id_product = lote_producto.id_product INNER JOIN lote ON lote.id_lote = lote_producto.id_lote WHERE lote.cantidad_lote>0`);
         res.status(200).send({ success: true, body: response.rows});
     } catch (error) {
         res.status(500).send({success: false, body: error});
@@ -32,7 +32,7 @@ exports.getAll = async (req, res) => {
 exports.getById = async (req, res) => {
     try {
         const id = req.params.id;
-        const response = await pool.query(`SELECT producto.*, lote.* FROM lote_producto INNER JOIN producto ON producto.id_product = lote_producto.id_product INNER JOIN lote ON lote.id_lote = lote_producto.id_lote WHERE producto.id_product = ${id}`);
+        const response = await pool.query(`SELECT producto.*, lote.* FROM lote_producto INNER JOIN producto ON producto.id_product = lote_producto.id_product INNER JOIN lote ON lote.id_lote = lote_producto.id_lote WHERE producto.id_product = ${id} AND lote.cantidad_lote>0`);
         res.status(200).send({ success: true, body: response.rows});
     } catch (error) {
         res.status(500).send({success: false, body: error});

@@ -22,7 +22,7 @@ exports.create = async (req, res) => {
   
 exports.getAll = async (req, res) => {
     try {
-        const response = await pool.query(`SELECT producto.*, lote.* FROM lote_producto INNER JOIN producto ON producto.id_product = lote_producto.id_product INNER JOIN lote ON lote.id_lote = lote_producto.id_lote WHERE lote.cantidad_lote>0`);
+        const response = await pool.query(`SELECT producto.*, lote.precio_entrada, lote.precio_venta, lote.cantidad_lote, to_char(lote.fecha_entrada, 'YYYY-MON-DD') as fecha_entrada, to_char(lote.fecha_vencimiento, 'YYYY-MON-DD') as fecha_vencimiento, lote.cedula_pro, lote.cedula_usu FROM lote_producto INNER JOIN producto ON producto.id_product = lote_producto.id_product INNER JOIN lote ON lote.id_lote = lote_producto.id_lote WHERE lote.cantidad_lote>0`);
         res.status(200).send({ success: true, body: response.rows});
     } catch (error) {
         res.status(500).send({success: false, body: error});
@@ -32,7 +32,7 @@ exports.getAll = async (req, res) => {
 exports.getById = async (req, res) => {
     try {
         const id = req.params.id;
-        const response = await pool.query(`SELECT producto.*, lote.* FROM lote_producto INNER JOIN producto ON producto.id_product = lote_producto.id_product INNER JOIN lote ON lote.id_lote = lote_producto.id_lote WHERE producto.id_product = ${id} AND lote.cantidad_lote>0`);
+        const response = await pool.query(`SELECT producto.*, lote.precio_entrada, lote.precio_venta, lote.cantidad_lote, to_char(lote.fecha_entrada, 'YYYY-MON-DD') as fecha_entrada, to_char(lote.fecha_vencimiento, 'YYYY-MON-DD') as fecha_vencimiento, lote.cedula_pro, lote.cedula_usu FROM lote_producto INNER JOIN producto ON producto.id_product = lote_producto.id_product INNER JOIN lote ON lote.id_lote = lote_producto.id_lote WHERE producto.id_product = ${id} AND lote.cantidad_lote>0`);
         res.status(200).send({ success: true, body: response.rows});
     } catch (error) {
         res.status(500).send({success: false, body: error});
@@ -43,7 +43,7 @@ exports.getById = async (req, res) => {
 exports.getByNombre = async (req, res) => {
     try {
         const nombre = req.params.id;
-        const response = await pool.query(`SELECT producto.*, lote.* FROM lote_producto INNER JOIN producto ON producto.id_product = lote_producto.id_product INNER JOIN lote ON lote.id_lote = lote_producto.id_lote WHERE producto.nombre_product LIKE '%${nombre}%'`);
+        const response = await pool.query(`SELECT producto.*, lote.precio_entrada, lote.precio_venta, lote.cantidad_lote, to_char(lote.fecha_entrada, 'YYYY-MON-DD') as fecha_entrada, to_char(lote.fecha_vencimiento, 'YYYY-MON-DD') as fecha_vencimiento, lote.cedula_pro, lote.cedula_usu FROM lote_producto INNER JOIN producto ON producto.id_product = lote_producto.id_product INNER JOIN lote ON lote.id_lote = lote_producto.id_lote WHERE producto.nombre_product LIKE '%${nombre}%'`);
         res.status(200).send({ success: true, body: response.rows});
     } catch (error) {
         res.status(500).send({success: false, body: error});
@@ -53,7 +53,7 @@ exports.getByNombre = async (req, res) => {
 exports.getByCantidad = async (req, res) => {
     try {
         const cantidad = req.params.id;
-        const response = await pool.query(`SELECT producto.*, lote.* FROM lote_producto INNER JOIN producto ON producto.id_product = lote_producto.id_product INNER JOIN lote ON lote.id_lote = lote_producto.id_lote WHERE lote.cantidad_lote <= ${cantidad}`);
+        const response = await pool.query(`SELECT producto.*, lote.precio_entrada, lote.precio_venta, lote.cantidad_lote, to_char(lote.fecha_entrada, 'YYYY-MON-DD') as fecha_entrada, to_char(lote.fecha_vencimiento, 'YYYY-MON-DD') as fecha_vencimiento, lote.cedula_pro, lote.cedula_usu FROM lote_producto INNER JOIN producto ON producto.id_product = lote_producto.id_product INNER JOIN lote ON lote.id_lote = lote_producto.id_lote WHERE lote.cantidad_lote <= ${cantidad}`);
         res.status(200).send({ success: true, body: response.rows});
     } catch (error) {
         res.status(500).send({success: false, body: error});

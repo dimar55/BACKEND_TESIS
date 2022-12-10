@@ -1,11 +1,12 @@
 const pool = require('../models/repository_postgre');
 const format = require('pg-format');
 
-function obtenerNombres(array){
+async function obtenerNombres(array){
     let prods = []
     for (let index = 0; index < array.length; index++) {
         const element = array[index];
-        prods.push(element.nombre_product)
+        const nombre_producto = await pool.query(`SELECT nombre_product FROM producto WHERE id_product = (SELECT id_product FROM lote_producto WHERE id_lote = ${element.id_lote})`)
+        prods.push(nombre_producto.rows[0].nombre_product)
     }
     return prods;
 }
@@ -13,8 +14,9 @@ function obtenerNombres(array){
 exports.getAll = async (req, res) => {
     try {
         const ventas = await pool.query('SELECT id_venta, total_venta FROM venta');
-        const response = await pool.query(`SELECT  venta.id_venta, to_char(venta.fecha_venta, 'YYYY-MON-DD') as fecha_venta, producto.nombre_product FROM venta_producto INNER JOIN producto ON producto.id_product = venta_producto.id_product INNER JOIN venta ON venta.id_venta = venta_producto.id_venta`);
+        const response = await pool.query(`SELECT  venta.id_venta, to_char(venta.fecha_venta, 'YYYY-MON-DD') as fecha_venta,venta_producto.id_lote FROM venta_producto INNER JOIN lote ON lote.id_lote = venta_producto.id_lote INNER JOIN venta ON venta.id_venta = venta_producto.id_venta`);
         let resp = [];
+        console.log('XDD'+response.rows)
         for (let index = 0; index < ventas.rows.length; index++) {
             const element = ventas.rows[index];
             let prods = response.rows.filter(ele => ele.id_venta == element.id_venta);
@@ -23,7 +25,7 @@ exports.getAll = async (req, res) => {
                     id_venta: element.id_venta,
                     total_venta: element.total_venta,
                     fecha_venta: prods[0].fecha_venta,
-                    prods: obtenerNombres(prods)
+                    prods: await obtenerNombres(prods)
                 }
                 resp.push(venta)
             }
@@ -37,9 +39,9 @@ exports.getAll = async (req, res) => {
 
 exports.getByDate = async (req, res) => {
     try {
-        const {Dateini, Datefin} = req.body;
-        const ventas = await pool.query(`SELECT id_venta, total_venta FROM venta WHERE fecha_venta >= '${Dateini}' AND fecha_venta <= '${Datefin}'`);
-        const response = await pool.query(`SELECT  venta.id_venta, to_char(venta.fecha_venta, 'YYYY-MON-DD') as fecha_venta, producto.nombre_product FROM venta_producto INNER JOIN producto ON producto.id_product = venta_producto.id_product INNER JOIN venta ON venta.id_venta = venta_producto.id_venta`);
+        const {fecha_ini, fecha_fin} = req.body;
+        const ventas = await pool.query(`SELECT id_venta, total_venta FROM venta WHERE fecha_venta >= '${fecha_ini}' AND fecha_venta <= '${fecha_fin}'`);
+        const response = await pool.query(`SELECT  venta.id_venta, to_char(venta.fecha_venta, 'YYYY-MON-DD') as fecha_venta, producto.nombre_product FROM venta_producto INNER JOIN lote ON lote.id_lote = venta_producto.id_lote INNER JOIN venta ON venta.id_venta = venta_producto.id_venta`);
         let resp = [];
         for (let index = 0; index < ventas.rows.length; index++) {
             const element = ventas.rows[index];
@@ -67,7 +69,7 @@ exports.insertarVentaProducto = async (req, res) => {
     for (let index = 0; index < productos.length; index++) {
        ventap.push([req.body.id_venta, productos[index][0], productos[index][1]])
     }
-    const response = await pool.query(format(`INSERT INTO venta_producto (id_venta, id_product, cantidad_venta) VALUES %L`, ventap))
+    const response = await pool.query(format(`INSERT INTO venta_producto (id_venta, id_lote, cantidad_venta) VALUES %L`, ventap))
     res.status(201).send({ success: true, body: {
         id_venta: req.body.id_venta,
         total_venta: req.body.total_venta,

@@ -53,7 +53,7 @@ exports.updateSaldo = async (req, res) => {
     try {
         const { id_saldo, estado_saldo, saldo } = req.body;
         const response = await pool.query(`UPDATE saldo SET estado_saldo = '${estado_saldo}', saldo = ${saldo} WHERE id_saldo = ${id_saldo}`);
-        res.status(204).send({ success: true, body: response.rows});
+        res.status(200).send({ success: true, body: response.rows});
     } catch (error) {
         res.status(500).send({success: false, body: error});
     }

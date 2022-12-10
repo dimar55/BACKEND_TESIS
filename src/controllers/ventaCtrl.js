@@ -11,6 +11,19 @@ async function obtenerNombres(array){
     return prods;
 }
 
+exports.getLastId = async (req, res) => {
+    try {
+        const response = await pool.query('SELECT id_venta FROM venta ORDER BY id_venta DESC LIMIT 1');
+        if(response.rowCount>0){
+            res.status(200).send({success: true, body: response.rows})
+        }else{
+            res.status(404).send({success: false, message: 'No hay ventas'})
+        }
+    } catch (error) {
+        res.status(500).send({ success: false, message: 'venta.getLastId', body: error})
+    }
+}
+
 exports.getAll = async (req, res) => {
     try {
         const ventas = await pool.query('SELECT id_venta, total_venta FROM venta');
@@ -81,12 +94,11 @@ exports.insertarVentaProducto = async (req, res) => {
 exports.create = async (req, res, next) => {
     try {
         let total = 0;
-    const {productos} = req.body;
+    const {productos, cedula_cli} = req.body;
     for (let index = 0; index < productos.length; index++) {
         total += productos[index][1]*productos[index][2];
     }
-    const response = await pool.query(`INSERT INTO venta (total_venta) VALUES ($1) RETURNING id_venta`, [total]);
-    
+    const response = await pool.query(`INSERT INTO venta (total_venta, cedula_cli) VALUES ($1, $2) RETURNING id_venta`, [total,cedula_cli]);
     req.body.id_venta = response.rows[0].id_venta;
     req.body.total_venta = total;
     next();

@@ -1,0 +1,10 @@
+{
+    "service": "gmail",
+    "auth": {
+        "type": "OAuth2",
+        "user": "soporte.yamelcris@gmail.com",
+        "clientId": "933005564106-ki821p73vhj13qth3d44bfh0l6cm9r3u.apps.googleusercontent.com",
+        "clientSecret": "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",
+        "refreshToken": "1//04qaFftUJAO2kCgYIARAAGAQSNwF-L9IraIA2QxMT2kvs4BPeX6NRXSlfqasgWnebguLk1rZlJED5c3Ysxc9F2tW8n3jgovBwqc8"
+    }
+}

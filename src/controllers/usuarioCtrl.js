@@ -17,15 +17,15 @@ const generarCodigo = (tam) => {
 
 exports.createUsuario = async (req, res) => {
     try {
-        const {cedula_usu, nombre_usu, nick_usu, contra_usu, rol_usu} = req.body;
+        const {cedula_usu, nombre_usu, nick_usu, contra_usu, correo_usu, rol_usu} = req.body;
     const pswHash = bcrypt.hashSync(contra_usu, 10);
-    const response = await pool.query(`INSERT INTO usuario (cedula_usu, nombre_usu, nick_usu, contra_usu, rol_usu) VALUES ($1, $2, $3, $4, $5)`, [cedula_usu, nombre_usu, nick_usu, pswHash, rol_usu]);
+    const response = await pool.query(`INSERT INTO usuario (cedula_usu, nombre_usu, nick_usu, contra_usu, correo_usu, rol_usu) VALUES ($1, $2, $3, $4, $5, $6)`, [cedula_usu, nombre_usu, nick_usu, pswHash, correo_usu, rol_usu]);
     res.status(201).json({
         success: true,
         message: 'Created',
         body: {
             user:{
-                cedula_usu, nombre_usu, nick_usu, contra_usu, rol_usu
+                cedula_usu, nombre_usu, nick_usu, contra_usu, correo_usu, rol_usu
             }
         }
     })

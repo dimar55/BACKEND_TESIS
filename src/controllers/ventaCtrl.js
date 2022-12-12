@@ -80,9 +80,10 @@ exports.insertarVentaProducto = async (req, res) => {
     const {productos} = req.body;
     const ventap = [];
     for (let index = 0; index < productos.length; index++) {
-       ventap.push([req.body.id_venta, productos[index][0], productos[index][1]])
+        let subtotal = productos[index][1] * productos[index][2];
+       ventap.push([req.body.id_venta, productos[index][0], productos[index][1], subtotal])
     }
-    const response = await pool.query(format(`INSERT INTO venta_producto (id_venta, id_lote, cantidad_venta) VALUES %L`, ventap))
+    const response = await pool.query(format(`INSERT INTO venta_producto (id_venta, id_product, cantidad_venta, subtotal_venta) VALUES %L`, ventap))
     res.status(201).send({ success: true, body: {
         id_venta: req.body.id_venta,
         total_venta: req.body.total_venta,

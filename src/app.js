@@ -13,8 +13,7 @@ const usuarioRoutes = require('./routes/usuario');
 const clienteRoutes = require('./routes/cliente');
 const proveedorRoutes = require('./routes/proveedor');
 const productoRoutes = require('./routes/producto');
-const loteRoutes = require('./routes/lote');
-const loteproductoRutes = require('./routes/loteproducto');
+const facturaRoutes = require('./routes/factura');
 const ventaRoutes = require('./routes/venta');
 const saldoRoutes = require('./routes/saldo');
 
@@ -23,8 +22,7 @@ app.use('/usuario', usuarioRoutes);
 app.use('/cliente', clienteRoutes);
 app.use('/proveedor', proveedorRoutes);
 app.use('/producto', productoRoutes);
-app.use('/lote', loteRoutes);
-app.use('/loteP', loteproductoRutes);
+app.use('/factura', facturaRoutes);
 app.use('/venta', ventaRoutes);
 app.use('/saldo', saldoRoutes);
 

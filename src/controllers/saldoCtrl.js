@@ -49,10 +49,10 @@ exports.getByFilter = async (req, res) => {
     }
 }
 
-exports.updateSaldo = async (req, res) => {
+exports.insertAbono = async (req, res) => {
     try {
-        const { id_saldo, estado_saldo, saldo } = req.body;
-        const response = await pool.query(`UPDATE saldo SET estado_saldo = '${estado_saldo}', saldo = ${saldo} WHERE id_saldo = ${id_saldo}`);
+        const { id_saldo, saldo } = req.body;
+        const response = await pool.query(`INSERT INTO saldo_abono (id_saldo, saldo) VALUES ($1, $2)`, [id_saldo, saldo]);
         res.status(200).send({ success: true, body: response.rows});
     } catch (error) {
         res.status(500).send({success: false, body: error});

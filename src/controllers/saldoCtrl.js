@@ -33,13 +33,13 @@ exports.getByFilter = async (req, res) => {
     const {estado_saldo, cedula_cli } = req.body;
 
     if(estado_saldo && cedula_cli){
-        query = `SELECT * FROM saldo WHERE estado_saldo = '${estado_saldo}' AND cedula_cli = ${cedula_cli}`;
+        query = `SELECT saldo.*, cliente.*, to_char(venta.fecha_venta, 'YYYY-MON-DD') as fecha_venta FROM saldo INNER JOIN cliente ON cliente.cedula_cli = saldo.cedula_cli INNER JOIN venta ON venta.id_venta = saldo.id_venta WHERE saldo.estado_saldo = '${estado_saldo}' AND saldo.cedula_cli = ${cedula_cli}`;
     }else if(estado_saldo){
-        query = `SELECT * FROM saldo WHERE estado_saldo = '${estado_saldo}'`;
+        query = `SELECT saldo.*, cliente.*, to_char(venta.fecha_venta, 'YYYY-MON-DD') as fecha_venta FROM saldo INNER JOIN cliente ON cliente.cedula_cli = saldo.cedula_cli INNER JOIN venta ON venta.id_venta = saldo.id_venta WHERE saldo.estado_saldo = '${estado_saldo}'`;
     }else if(cedula_cli){
-        query = `SELECT * FROM saldo WHERE cedula_cli = ${cedula_cli}`;
+        query = `SELECT saldo.*, cliente.*, to_char(venta.fecha_venta, 'YYYY-MON-DD') as fecha_venta FROM saldo INNER JOIN cliente ON cliente.cedula_cli = saldo.cedula_cli INNER JOIN venta ON venta.id_venta = saldo.id_venta WHERE saldo.cedula_cli = ${cedula_cli}`;
     }else{
-        query = `SELECT * FROM saldo`;
+        query = `SELECT saldo.*, cliente.*, to_char(venta.fecha_venta, 'YYYY-MON-DD') as fecha_venta FROM saldo INNER JOIN cliente ON cliente.cedula_cli = saldo.cedula_cli INNER JOIN venta ON venta.id_venta = saldo.id_venta`;
     }
     try {
         const response = await pool.query(query);

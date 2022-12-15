@@ -49,6 +49,16 @@ exports.getByFilter = async (req, res) => {
     }
 }
 
+exports.getAbonos = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const response = await pool.query(`SELECT * FROM saldo_abono WHERE id_saldo = ${id}`);
+        res.status(200).send({ success: true, body: response.rows});
+    } catch (error) {
+        res.status(500).send({success: false, body: error});
+    }
+}
+
 exports.insertAbono = async (req, res) => {
     try {
         const { id_saldo, saldo } = req.body;

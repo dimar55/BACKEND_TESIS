@@ -23,26 +23,13 @@ exports.getLastId = async (req, res) => {
     }
 }
 
-exports.getAll = async (req, res) => {
+exports.getById = async (req, res) => {
     try {
-        const response = await pool.query(`SELECT  venta.id_venta, venta.total_venta ,to_char(venta.fecha_venta, 'YYYY-MON-DD') as fecha_venta FROM venta_producto INNER JOIN venta ON venta.id_venta = venta_producto.id_venta`);
-        let resp = [];
-        for (let index = 0; index < response.rows.length; index++) {
-            const element = response.rows[index];
-            let id_venta = element.id_venta;
-            const nombres = await pool.query(`SELECT producto.nombre_product, venta_producto.cantidad_venta, venta_producto.subtotal_venta FROM producto INNER JOIN venta_producto ON venta_producto.id_product = producto.id_product WHERE venta_producto.id_venta = ${id_venta}`);
-            const venta = {
-                id_venta: element.id_venta,
-                total_venta: element.total_venta,
-                fecha_venta: element.fecha_venta,
-                prod_nombres: obtenerNombres(nombres.rows),
-                prods: nombres.rows
-            }
-            resp.push(venta)
-        }
-        res.status(200).send({success: true, body: resp})
+        const id = req.params.id;
+        const response = await pool.query(`SELECT * FROM factura WHERE id_fact = '${id}'`);
+        res.status(200).send({success: true, body: response.rows})
     } catch (error) {
-        res.status(500).send({ success: false, message: 'venta.getAll', body: error})
+        res.status(500).send({ success: false, message: 'factura.getAll', body: error})
     }
 }
 

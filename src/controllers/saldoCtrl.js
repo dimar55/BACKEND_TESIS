@@ -21,7 +21,7 @@ exports.create = async (req, res) => {
 
   exports.getAll = async (req, res) => {
     try {
-        const response = await pool.query(`SELECT * FROM saldo INNER JOIN cliente ON cliente.cedula_cli = saldo.cedula_cli`);
+        const response = await pool.query(`SELECT saldo.*, cliente.*, to_char(venta.fecha_venta, 'YYYY-MON-DD') as fecha_venta FROM saldo INNER JOIN cliente ON cliente.cedula_cli = saldo.cedula_cli INNER JOIN venta ON venta.id_venta = saldo.id_venta`);
         res.status(200).send({ success: true, body: response.rows});
     } catch (error) {
         res.status(500).send({success: false, body: error});
@@ -52,7 +52,7 @@ exports.getByFilter = async (req, res) => {
 exports.getAbonos = async (req, res) => {
     try {
         const id = req.params.id;
-        const response = await pool.query(`SELECT * FROM saldo_abono WHERE id_saldo = ${id}`);
+        const response = await pool.query(`SELECT saldo, to_char(fecha_abono, 'YYYY-MON-DD') as fecha_abono FROM saldo_abono WHERE id_saldo = ${id}`);
         res.status(200).send({ success: true, body: response.rows});
     } catch (error) {
         res.status(500).send({success: false, body: error});

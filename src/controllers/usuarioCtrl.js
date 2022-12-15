@@ -43,6 +43,22 @@ exports.getUsuarios = async (req, res) => {
         res.status(500).send({success: false, body: error});
     }
 }
+
+exports.getExistentes = async (req, res) => {
+    try {
+        const {cedula_usu, nick_usu, correo_usu} = req.body;
+        const cedulaE = await pool.query(`SELECT * FROM usuario WHERE cedula_usu = ${cedula_usu}`);
+        const nickE = await pool.query(`SELECT * FROM usuario WHERE nick_usu = '${nick_usu}'`);
+        const correoE = await pool.query(`SELECT * FROM usuario WHERE correo_usu = '${correo_usu}'`);
+        res.status(200).send({ success: true, body: {
+            cedula: cedulaE.rowCount>0,
+            nick: nickE.rowCount>0,
+            correo: correoE.rowCount>0
+        }});
+    } catch (error) {
+        res.status(500).send({success: false, body: error});
+    }
+}
   
   exports.find = async (req, res, next) => {
       const nick = req.body.nick_usu;

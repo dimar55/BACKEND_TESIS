@@ -21,7 +21,7 @@ exports.create = async (req, res) => {
 
   exports.getAll = async (req, res) => {
     try {
-        const response = await pool.query(`SELECT * FROM saldo`);
+        const response = await pool.query(`SELECT * FROM saldo INNER JOIN cliente ON cliente.cedula_cli = saldo.cedula_cli`);
         res.status(200).send({ success: true, body: response.rows});
     } catch (error) {
         res.status(500).send({success: false, body: error});

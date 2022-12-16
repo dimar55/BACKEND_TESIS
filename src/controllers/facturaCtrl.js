@@ -64,7 +64,7 @@ exports.insertarFacturaProducto = async (req, res) => {
     const {productos} = req.body;
     const ventap = [];
     for (let index = 0; index < productos.length; index++) {
-        let subtotal = productos[index][1] * productos[index][2];
+        let subtotal = productos[index][1] * productos[index][3];
        ventap.push([req.body.id_fact, productos[index][0], productos[index][1], productos[index][2], productos[index][3]])
     }
     const response = await pool.query(format(`INSERT INTO factura_producto (id_fact, id_product, precio_entrada, precio_venta, cantidad) VALUES %L`, ventap))

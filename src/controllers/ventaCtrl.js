@@ -25,7 +25,8 @@ exports.getLastId = async (req, res) => {
 
 exports.getAll = async (req, res) => {
     try {
-        const response = await pool.query(`SELECT  venta.id_venta, venta.total_venta ,to_char(venta.fecha_venta, 'YYYY-MON-DD') as fecha_venta, cliente.cedula_cli, cliente.nombre_cli FROM venta INNER JOIN venta_producto ON venta_producto.id_venta = venta.id_venta INNER JOIN cliente ON cliente.cedula_cli = venta.cedula_cli`);
+        const response = await pool.query(`SELECT  venta.id_venta, venta.total_venta ,to_char(venta.fecha_venta, 'YYYY-MON-DD') as fecha_venta, cliente.cedula_cli, cliente.nombre_cli FROM venta INNER JOIN cliente ON cliente.cedula_cli = venta.cedula_cli`);
+        console.log(response.rows)
         let resp = [];
         for (let index = 0; index < response.rows.length; index++) {
             const element = response.rows[index];
@@ -51,7 +52,7 @@ exports.getAll = async (req, res) => {
 exports.getByDate = async (req, res) => {
     try {
         const {fecha_ini, fecha_fin} = req.body;
-        const response = await pool.query(`SELECT venta.id_venta, venta.total_venta ,to_char(venta.fecha_venta, 'YYYY-MON-DD') as fecha_venta FROM venta INNER JOIN venta_producto ON venta_producto.id_venta = venta.id_venta WHERE venta.fecha_venta >= '${fecha_ini}' AND venta.fecha_venta <= '${fecha_fin}'`);
+        const response = await pool.query(`SELECT venta.id_venta, venta.total_venta ,to_char(venta.fecha_venta, 'YYYY-MON-DD') as fecha_venta FROM venta WHERE venta.fecha_venta >= '${fecha_ini}' AND venta.fecha_venta <= '${fecha_fin}'`);
         let resp = [];
         for (let index = 0; index < response.rows.length; index++) {
             const element = response.rows[index];

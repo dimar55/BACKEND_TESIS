@@ -122,6 +122,7 @@ exports.obtnCodigo = async (req, res) => {
                 accountTransport.auth.accessToken = token;     
             });
             let mail = await nodemailer.createTransport(accountTransport).sendMail(message)
+            const response = pool.query(`UPDATE usuario SET cambiocontra = true WHERE correo_usu = '${correo_usu}'`)
             res.status(200).send({success: true, body: {message: 'Correo enviado', message, code}})
         }else{
             res.status(404).send({ success: false, body: {message: 'El correo ingreso no existe'} });
@@ -176,9 +177,58 @@ exports.UpdateByEmail = async ( req, res ) =>{
         const {contra_usu, correo_usu} = req.body;
         const pswHash = bcrypt.hashSync(contra_usu, 10);
         const response = await pool.query(`UPDATE usuario SET contra_usu = $1 WHERE correo_usu = $2`, [pswHash, correo_usu]);
+        const resp = pool.query(`UPDATE usuario SET cambiocontra = false WHERE correo_usu = '${correo_usu}'`)
         res.status(200).send({success: true, body: {message: 'Contraseña actualizada'}})
     }catch(err){
         console.log(" err actualizarContra = ", err);
         res.status(500).send({ success: false, body: {message: 'Error al actualizar contraseña', err} });
+    }
+}
+
+exports.UpdateIniciar = async (req, res) => {
+    try{
+        const { nick_usu } = req.body;
+        const response = await pool.query(`UPDATE usuario SET estado = true WHERE nick_usu = '${nick_usu}'`)
+        res.status(200).send({success: true, body: {message: 'Sesion iniciada'}})
+    }catch(err){
+        console.log(" err UpdateIniciar = ", err);
+        res.status(500).send({ success: false, body: {message: 'Error al actualizar iniciar', err} });
+    }
+}
+
+exports.UpdateCerrar = async (req, res) => {
+    try{
+        let {token} = req.body;
+        jwt.verify(token, 'f3374801da1c40739c10d7fdb181cc74', function(err, decoded) {
+            if(err) return res.status(200).send({success: false, body: {message: 'Token invalido'}})
+            let cedula_usu = decoded.user.cedula_usu;
+            const response = pool.query(`UPDATE usuario SET estado = false WHERE cedula_usu = ${cedula_usu}`)
+            res.status(200).send({success: true, body: {message: 'Sesion cerrada'}})
+        });
+    }catch(err){
+        console.log(" err UpdateIniciar = ", err);
+        res.status(500).send({ success: false, body: {message: 'Error al actualizar iniciar', err} });
+    }
+}
+
+exports.Comprobariniciado = async (req, res) => {
+    try{
+        const { id } = req.params;
+        const response = await pool.query(`SELECT estado FROM usuario WHERE nick_usu = '${id}'`)
+        res.status(200).send({success: true, body: response.rows})
+    }catch(err){
+        console.log(" err UpdateIniciar = ", err);
+        res.status(500).send({ success: false, body: {message: 'Error al actualizar iniciar', err} });
+    }
+}
+
+exports.Comprobarcodigo = async (req, res) => {
+    try{
+        const { id } = req.params;
+        const response = await pool.query(`SELECT cambiocontra FROM usuario WHERE nick_usu = '${id}'`)
+        res.status(200).send({success: true, body: response.rows})
+    }catch(err){
+        console.log(" err UpdateIniciar = ", err);
+        res.status(500).send({ success: false, body: {message: 'Error al actualizar iniciar', err} });
     }
 }
